@@ -2,6 +2,8 @@
 
 **The macOS `caffeinate` command, on Windows, in PowerShell.**
 
+![Image-preview](https://raw.githubusercontent.com/MushroomFleet/caffeinate-win-pwsh/refs/heads/main/caffeinate-win-pwsh.png)
+
 Keeps a Windows machine — and optionally its display — awake on demand, using the
 same flags and the same muscle memory as `caffeinate -sid` on a Mac.
 
