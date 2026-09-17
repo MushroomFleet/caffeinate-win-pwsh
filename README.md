@@ -38,7 +38,7 @@ overnight builds, and remote sessions you need to stay reachable.
 
 - Windows
 - Windows PowerShell 5.1 **or** PowerShell 7+ — verified on both
-- No administrator rights, no dependencies, no install
+- No administrator rights, no dependencies, nothing to compile
 
 ---
 
@@ -142,15 +142,17 @@ caffeinate -sid -w 12345
 
 Press `Ctrl+C`. The assertion is released on the way out.
 
-A `decaffeinate` command is also included as an escape hatch, in case a shell is
-ever killed hard enough to skip the cleanup:
+A `decaffeinate` command is also included as an escape hatch, for the rare case
+where cleanup is skipped but the shell itself is still running:
 
 ```powershell
 decaffeinate
 ```
 
-Closing the PowerShell window also clears the assertion — the state belongs to
-the shell, not the system.
+If the shell exits at all — closed normally, or killed outright — the assertion
+goes with it. The state belongs to that process rather than to the system, so no
+crash can leave your machine permanently unable to sleep. This is the main
+practical advantage over power-plan-editing approaches, which fail dirty.
 
 ---
 
