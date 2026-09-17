@@ -44,30 +44,46 @@ overnight builds, and remote sessions you need to stay reachable.
 
 ## Installation
 
-### Try it in the current session
-
 ```powershell
-. .\caffeinate.ps1
+git clone https://github.com/MushroomFleet/caffeinate-win-pwsh.git
+cd caffeinate-win-pwsh
+.\install.ps1
 ```
 
-### Install permanently
+That's it. Open a new shell and `caffeinate -sid` is available.
 
-Append the script to your PowerShell profile so `caffeinate` is always available:
+The installer finds every PowerShell host on the machine and writes the function
+into each one's profile. This matters because Windows PowerShell 5.1 and
+PowerShell 7 use *different* profile files, so installing into one leaves the
+other without the command. It asks each host for its own profile path rather than
+guessing, so a Documents folder redirected to OneDrive is handled correctly.
+
+Re-running is safe. The function is written between marker comments and replaced
+in place, so it updates rather than accumulating copies. To preview without
+writing anything:
 
 ```powershell
-if (!(Test-Path $PROFILE)) { New-Item -Type File -Path $PROFILE -Force }
-Get-Content .\caffeinate.ps1 | Add-Content $PROFILE
-. $PROFILE
+.\install.ps1 -WhatIf
 ```
 
-> **Note:** Windows PowerShell 5.1 and PowerShell 7 use *different* profile files
-> (`...\Documents\WindowsPowerShell\` vs `...\Documents\PowerShell\`). Run the
-> snippet above from each host you want it in.
+To remove it again, leaving the rest of your profile untouched:
+
+```powershell
+.\install.ps1 -Uninstall
+```
 
 If profile scripts are blocked, authorise them once with:
 
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+### Without installing
+
+To try it in the current session only:
+
+```powershell
+. .\caffeinate.ps1
 ```
 
 ---
@@ -174,7 +190,8 @@ about if you plan to modify the script or write your own:
 ## Repository structure
 
 ```
-caffeinate.ps1                 the implementation - this is the file you install
+install.ps1                    installs into every PowerShell host's profile
+caffeinate.ps1                 the implementation
 scratch-concept/               original concept notes, kept for provenance
 README.md
 LICENSE
@@ -189,7 +206,7 @@ Treat them as notes, not instructions. The PowerShell in those documents predate
 the fixes listed under [Implementation notes](#implementation-notes) and does not
 work as written — among other things `-sid` never binds, `ES_CONTINUOUS` is never
 set, and the flags are summed rather than OR'd, so the headline
-`caffeinate -sid` is a no-op. Install `caffeinate.ps1` instead.
+`caffeinate -sid` is a no-op. Run `install.ps1` instead.
 
 ---
 
