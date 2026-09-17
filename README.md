@@ -171,6 +171,28 @@ about if you plan to modify the script or write your own:
 
 ---
 
+## Repository structure
+
+```
+caffeinate.ps1                 the implementation - this is the file you install
+scratch-concept/               original concept notes, kept for provenance
+README.md
+LICENSE
+```
+
+`scratch-concept/` holds the two hand-written guides this project grew out of:
+`original-caffeinate-instructions.md` and the portable `caffeinate-windows.md`.
+They are archived as a record of how the idea took shape, and are **superseded by
+`caffeinate.ps1`**.
+
+Treat them as notes, not instructions. The PowerShell in those documents predates
+the fixes listed under [Implementation notes](#implementation-notes) and does not
+work as written — among other things `-sid` never binds, `ES_CONTINUOUS` is never
+set, and the flags are summed rather than OR'd, so the headline
+`caffeinate -sid` is a no-op. Install `caffeinate.ps1` instead.
+
+---
+
 ## License
 
 Apache License 2.0 — see [LICENSE](LICENSE).
