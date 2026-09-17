@@ -44,43 +44,106 @@ overnight builds, and remote sessions you need to stay reachable.
 
 ## Installation
 
+One minute, once per machine. No administrator rights needed.
+
+### Step 1 - Open PowerShell
+
+Press `Win` + `X` and choose **Terminal** (or **Windows PowerShell**). A normal
+window is fine - do *not* "Run as administrator".
+
+### Step 2 - Get the files
+
+**If you have git:**
+
 ```powershell
 git clone https://github.com/MushroomFleet/caffeinate-win-pwsh.git
 cd caffeinate-win-pwsh
+```
+
+**If you don't:** click the green **Code** button on the repo page, choose
+**Download ZIP**, and extract it. Then point PowerShell at the extracted folder
+and unblock the files - Windows marks anything that came from a ZIP as untrusted,
+which would otherwise stop the script running:
+
+```powershell
+cd "$HOME\Downloads\caffeinate-win-pwsh-main"
+Get-ChildItem -Recurse | Unblock-File
+```
+
+### Step 3 - Run the installer
+
+```powershell
 .\install.ps1
 ```
 
-That's it. Open a new shell and `caffeinate -sid` is available.
+It reports one line per PowerShell host it found:
 
-The installer finds every PowerShell host on the machine and writes the function
-into each one's profile. This matters because Windows PowerShell 5.1 and
-PowerShell 7 use *different* profile files, so installing into one leaves the
-other without the command. It asks each host for its own profile path rather than
-guessing, so a Documents folder redirected to OneDrive is handled correctly.
+```
+Installing caffeinate into 2 profile(s):
 
-Re-running is safe. The function is written between marker comments and replaced
-in place, so it updates rather than accumulating copies. To preview without
-writing anything:
-
-```powershell
-.\install.ps1 -WhatIf
+Host                   Status    Profile
+----                   ------    -------
+Windows PowerShell 5.1 installed C:\Users\you\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1
+PowerShell 7+          installed C:\Users\you\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
 ```
 
-To remove it again, leaving the rest of your profile untouched:
+Seeing only one host listed is normal - it means only one is installed on that
+machine.
+
+### Step 4 - Open a *new* PowerShell window
+
+This step matters. A profile is only read when a shell starts, so the window you
+just installed from won't have the command yet. Open a fresh one and try:
 
 ```powershell
-.\install.ps1 -Uninstall
+caffeinate -sid -t 5
 ```
 
-If profile scripts are blocked, authorise them once with:
+```
+[caffeinate] (System + Idle + Display) awake for 5 s. Ctrl+C to stop.
+[caffeinate] sleep behaviour restored.
+```
+
+If you see that, you're done. `caffeinate` is now available in every new shell,
+permanently.
+
+---
+
+### If something goes wrong
+
+**"running scripts is disabled on this system"**
+
+Windows blocks local scripts by default. Authorise them once, then repeat step 3:
 
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
+**"The term 'caffeinate' is not recognized"**
+
+You're still in the shell you installed from. Open a new window, or reload the
+current one:
+
+```powershell
+. $PROFILE
+```
+
+### Other installer options
+
+| Command | What it does |
+|---------|--------------|
+| `.\install.ps1 -WhatIf` | Shows which files it would change, writing nothing |
+| `.\install.ps1` | Safe to re-run - updates in place rather than adding a second copy |
+| `.\install.ps1 -Uninstall` | Removes it, leaving the rest of your profile untouched |
+
+The installer asks each PowerShell host for its own profile path rather than
+guessing, so a Documents folder redirected to OneDrive is handled correctly. It
+writes the function between marker comments, which is what makes re-running and
+uninstalling safe.
+
 ### Without installing
 
-To try it in the current session only:
+To try it in the current session only, without touching your profile:
 
 ```powershell
 . .\caffeinate.ps1
